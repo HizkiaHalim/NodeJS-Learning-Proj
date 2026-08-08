@@ -1,0 +1,11 @@
+{
+  "name": "basic-api-and-user-management",
+  "version": "1.0.0",
+  "description": "task 1 bootcamp nusacode: build a basic api",
+  "main": "src/server.js",
+  "author": "hizkia halim",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
