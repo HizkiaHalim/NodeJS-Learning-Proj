@@ -15,7 +15,8 @@
     "nodemon": "^3.1.14"
   },
   "scripts": {
-    "dev" : "npm run seed:admin && nodemon server.js",
-    "seed:admin" : "node src/seed/admin.js"
+    "dev": "npm run seed:admin && npm run seed:warmUpAi && nodemon server.js",
+    "seed:admin": "node src/seed/admin.js",
+    "seed:warmUpAi": "node src/seed/warmUpAi.js"
   }
 }

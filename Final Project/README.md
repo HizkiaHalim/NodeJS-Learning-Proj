@@ -1,5 +1,41 @@
 # Rental Equipment API Documentation
 
+## Access Control
+
+Legend: `[PUBLIC]` no authentication required · `[USER]` requires user token · `[ADMIN]` requires admin token · `[BOTH]` requires either user or admin token 
+
+### Authentication Endpoints
+| Access | Method | Endpoint |
+|--------|--------|----------|
+| USER | POST | `/auth/register` |
+| USER | POST | `/auth/login` |
+| ADMIN | POST | `/auth/adm-register` |
+| ADMIN | POST | `/auth/adm-login` |
+| BOTH | POST | `/auth/change-password` |
+
+### Equipment Endpoints
+| Access | Method | Endpoint |
+|--------|--------|----------|
+| PUBLIC | GET | `/equipment/get-all` |
+| PUBLIC | GET | `/equipment/get-equipment-detail/:id` |
+| ADMIN | POST | `/equipment/register` |
+| ADMIN | PUT | `/equipment/edit` |
+| ADMIN | DELETE | `/equipment/delete/:id` |
+
+### Cart Endpoints
+| Access | Method | Endpoint |
+|--------|--------|----------|
+| USER | POST | `/cart/add-to-cart` |
+| USER | POST | `/cart/remove-from-cart` |
+| USER | GET | `/reservation/get-cart` |
+| USER | PUT | `/reservation/minus-from-cart` |
+| USER | POST | `/reservation/checkout` |
+
+### Reservation Endpoints
+| Access | Method | Endpoint |
+|--------|--------|----------|
+| ADMIN | PUT | `/reservation/update-status` |
+
 ## Authentication Endpoints
 
 ### Register User
