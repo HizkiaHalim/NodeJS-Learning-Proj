@@ -1,0 +1,21 @@
+{
+  "name": "Final Project",
+  "version": "1.0.0",
+  "description": "Final Project: Simple purchasing system using NodeJS, Express, and MySQL",
+  "main": "src/server.js",
+  "author": "hizkia halim",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.11.0",
+    "mysql2": "^3.23.4",
+    "nodemon": "^3.1.14"
+  },
+  "scripts": {
+    "dev" : "npm run seed:admin && nodemon server.js",
+    "seed:admin" : "node src/seed/admin.js"
+  }
+}
