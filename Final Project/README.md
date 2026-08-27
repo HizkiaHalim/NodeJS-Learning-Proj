@@ -25,8 +25,8 @@ Legend: `[PUBLIC]` no authentication required · `[USER]` requires user token ·
 ### Cart Endpoints
 | Access | Method | Endpoint |
 |--------|--------|----------|
-| USER | POST | `/cart/add-to-cart` |
-| USER | POST | `/cart/remove-from-cart` |
+| USER | POST | `/reservation/add-to-cart` |
+| USER | POST | `/reservation/remove-from-cart` |
 | USER | GET | `/reservation/get-cart` |
 | USER | PUT | `/reservation/minus-from-cart` |
 | USER | POST | `/reservation/checkout` |
@@ -35,6 +35,11 @@ Legend: `[PUBLIC]` no authentication required · `[USER]` requires user token ·
 | Access | Method | Endpoint |
 |--------|--------|----------|
 | ADMIN | PUT | `/reservation/update-status` |
+
+### AI Assistant Endpoints
+| Access | Method | Endpoint |
+|--------|--------|----------|
+| BOTH | POST | `/ai/chat` |
 
 ## Authentication Endpoints
 
@@ -380,5 +385,21 @@ Legend: `[PUBLIC]` no authentication required · `[USER]` requires user token ·
         }
       ]
     }
+  }
+  ```
+  
+  ## AI API Assistant Endpoints
+- **Endpoint**: `POST /ai/chat`
+- **Request Body**:
+  ```json
+  {
+    "chat": "string"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "messages": "",
+    "requests": []
   }
   ```

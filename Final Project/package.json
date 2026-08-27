@@ -16,6 +16,7 @@
   },
   "scripts": {
     "dev": "npm run seed:admin && npm run seed:warmUpAi && nodemon server.js",
+    "prod": "npm run seed:admin && npm run seed:warmUpAi && nodemon server.js",
     "seed:admin": "node src/seed/admin.js",
     "seed:warmUpAi": "node src/seed/warmUpAi.js"
   }

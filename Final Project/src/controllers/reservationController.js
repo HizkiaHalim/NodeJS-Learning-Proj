@@ -22,10 +22,10 @@ async function AddToCart(req, res, next) {
             WHERE u.id = ? AND r.reservation_status = 'Waiting For Payment'",
 			[user.id],
 		);
-
+		
 		await connection.beginTransaction();
 
-		if (reservationExist[0]) {
+		if (reservationExist[0].count > 0) {
 			const [reservation] = await db.execute(
 				"SELECT r.id, rd.id as reservation_detail_id FROM \
                 reservation_carts r \
@@ -95,6 +95,8 @@ async function AddToCart(req, res, next) {
 					[baseReservation[0].id, equipment_id, quantity],
 				);
 			}
+			
+			await connection.commit();
 
 			cart_detail = await db.execute(
 				"SELECT rd.qty, e.name, e.price FROM\
@@ -119,6 +121,7 @@ async function AddToCart(req, res, next) {
 				[resultreservation.insertId, equipment_id, quantity],
 			);
 
+			await connection.commit();
 			cart_detail = await db.execute(
 				"SELECT rd.qty, e.name, e.price FROM\
                     reservation_carts r\
@@ -131,7 +134,6 @@ async function AddToCart(req, res, next) {
 			reservation_id = resultreservation.insertId;
 		}
 
-		await connection.commit();
 
 		res.status(201).json({
 			message: "Produk berhasil dimasukan ke cart",
