@@ -12,7 +12,7 @@ router.post('/remove-from-cart', middleWare.reservationMiddleware, reservation.R
 
 router.put('/minus-from-cart', middleWare.reservationMiddleware, reservation.MinusFromCart);
 
-router.put('/checkout', middleWare.reservationMiddleware, reservation.Checkout);
+router.post('/checkout', middleWare.reservationMiddleware, reservation.Checkout);
 
 router.put('/update-status', middleWare.adminReservationMiddleware, reservation.UpdateReservationStatus);
 

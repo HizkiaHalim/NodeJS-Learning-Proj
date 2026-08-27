@@ -34,7 +34,7 @@ async function AddToCart(req, res, next) {
                 WHERE u.id = ? AND r.reservation_status = 'Waiting For Payment' AND rd.equipments_id = ?  AND rd.status = 1 LIMIT 1",
 				[user.id, equipment_id],
 			);
-			
+
 			const [baseReservation] = await db.execute(
 				"SELECT r.id as id FROM \
 				reservation_carts r \
@@ -57,7 +57,6 @@ async function AddToCart(req, res, next) {
 					return res.status(400).json({
 						message: "Quantity harus lebih besar dari 0",
 					});
-					
 				}
 
 				if (qtyCheck[0].qty + quantity > qtyCheck[0].stock) {
@@ -106,7 +105,9 @@ async function AddToCart(req, res, next) {
 				[reservation[0] ? reservation[0].id : baseReservation[0].id],
 			);
 
-			reservation_id = reservation[0] ? reservation[0].id : baseReservation[0].id;
+			reservation_id = reservation[0]
+				? reservation[0].id
+				: baseReservation[0].id;
 		} else {
 			const [resultreservation] = await db.execute(
 				"INSERT INTO reservation_carts (user_id) VALUES (?)",
@@ -329,15 +330,16 @@ async function MinusFromCart(req, res, next) {
 async function Checkout(req, res, next) {
 	const connection = await db.getConnection();
 	try {
-		const { reservation_id } = req.body;
-		const { user } = req.user;
+		let { reservation_id } = req.body;
+		const user = req.user;
 
 		if (!reservation_id) {
-			const { cart } = await db.execute(
+			const [cart] = await db.execute(
 				'SELECT id FROM reservation_carts WHERE user_id = ? AND reservation_status = "Waiting For Payment" and status = 1',
+				[user.id],
 			);
 
-			if (cart.length === 0) {
+			if (!cart[0]) {
 				return res.status(400).json({
 					message: "Anda masih belum memiliki cart!",
 				});
@@ -348,23 +350,23 @@ async function Checkout(req, res, next) {
 
 		await connection.beginTransaction();
 
-		const { cart_detail } = await db.execute(
-			"SELECT e.name, e.price AS price_per_item, rd.qty, (od.qty * e.price) AS total_price FROM\
+		const [cart_detail] = await db.execute(
+			"SELECT e.id as product_id, e.name, e.price AS price_per_item, rd.qty, (rd.qty * e.price) AS total_price FROM\
 			reservation_detail rd\
 			JOIN equipments e ON rd.equipments_id = e.id\
-			WHERE rd.reservation_id = ? AND rd.status = 1 FOR UDPATE",
+			WHERE rd.reservation_id = ? AND rd.status = 1 FOR UPDATE",
 			[reservation_id],
 		);
 
+		let total_price = 0;
 		if (cart_detail.length > 0) {
-			let total_price = 0;
 			for (let i = 0; i < cart_detail.length; i++) {
-				const { product } = await db.execute(
+				const [product] = await db.execute(
 					"SELECT * FROM equipments WHERE id = ? and status = 1 and stock >= ? FOR UPDATE",
 					[cart_detail[i].product_id, cart_detail[i].qty],
 				);
 
-				if (product[0].length == 0) {
+				if (!product[0]) {
 					await connection.rollback();
 					res.status(400).json({
 						messages:
@@ -435,19 +437,27 @@ async function UpdateReservationStatus(req, res, next) {
 			});
 		}
 
-		const { reservation_status } = await db.execute(
+		const [reservation_status] = await db.execute(
 			"SELECT reservation_status FROM reservation_carts WHERE id = ?",
 			[reservation_id],
 		);
 
-		const currentIndex = statusOrder.indexOf(status);
-		const newIndex = statusOrder.indexOf(reservation_status);
+		const newIndex = statusOrder.indexOf(status);
+		const currentIndex = statusOrder.indexOf(
+			reservation_status[0].reservation_status,
+		);
+
+		if (newIndex === -1) {
+			return res.status(400).json({
+				message: "Status baru tidak valid",
+			});
+		}
 
 		if (!(newIndex === currentIndex + 1)) {
 			return res.status(400).json({
 				message:
 					"Perubahan status invalid dari " +
-					reservation_status +
+					reservation_status[0].reservation_status +
 					" ke " +
 					status +
 					"!",
@@ -455,12 +465,12 @@ async function UpdateReservationStatus(req, res, next) {
 		}
 		await connection.beginTransaction();
 
-		try {
-			const { reservation_detail } = await db.execute(
-				"SELECT * FROM reservation_detail WHERE reservation_id = ?",
-				[reservation_id],
-			);
+		const  [reservation_detail]  = await db.execute(
+			"SELECT * FROM reservation_detail WHERE reservation_id = ? AND status = 1",
+			[reservation_id],
+		);
 
+		try {
 			await db.execute(
 				"UPDATE reservation_carts SET reservation_status = ? WHERE id = ?",
 				[status, reservation_id],
