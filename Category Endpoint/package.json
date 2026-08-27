@@ -1,0 +1,17 @@
+{
+  "name": "basic-api-and-user-management",
+  "version": "1.0.0",
+  "description": "task 2 bootcamp nusacode: build endpoint category",
+  "main": "src/server.js",
+  "author": "hizkia halim",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "mysql2": "^3.23.4",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
+  },
+  "scripts": {
+    "dev": "nodemon server.js"
+  }
+}
